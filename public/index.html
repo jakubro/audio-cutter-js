@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Example Audio Cutter App</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.3.2/wavesurfer.min.js"></script>
+  </head>
+  <body>
+    <script>
+      _songcut_config = {
+        source: {
+          uri: 'https://ia902606.us.archive.org/35/items/shortpoetry_047_librivox/song_cjrg_teasdale_64kb.mp3',
+          metadata: {
+            songalbum: 'A Night at the Opera',
+            songtitle: 'Bohemian Rhapsody',
+            songartist: 'Queen',
+            sourcePath: '/uploads/cache/28022017_210358_58b5e5be1e071.mp3',
+            startTime: '00:00:00.000',
+            endTime: '00:00:30.000' // todo: value should be set to max(30s, length of track)
+          }
+        },
+        target: {
+          uri: 'http://www.online-ringtone-maker.com/ComingSoon/release/cut.php',
+          method: 'post'
+        }
+      };
+    </script>
+    <div id="root">
+      <div id="waveform"></div>
+      <button id="btn-play">
+        Play/Pause
+      </button>
+      <button id="btn-save">
+        Save
+      </button>
+    </div>
+    <form id="form-cut">
+      <input type="hidden" name="songalbum">
+      <input type="hidden" name="songtitle">
+      <input type="hidden" name="songartist">
+      <input type="hidden" name="sourcePath">
+      <input type="hidden" name="startTime">
+      <input type="hidden" name="endTime">
+    </form>
+    <script src="../src/index.js"></script>
+  </body>
+</html>
