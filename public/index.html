@@ -26,18 +26,29 @@
           method: 'post'
         },
         player: {
-          element: '#waveform'
+          container: '#waveform',
+          cursorColor: '#c63ab2',
+          progressColor: '#4BB9F7',
+          waveColor: '#7e7e7e'
+        },
+        region: {
+          color: 'hsla(330, 100%, 20%, 0.2)'
         }
       };
     </script>
+    <style>
+      .dark input.submit:not(.active) {
+        color: grey;
+      }
+    </style>
   </head>
   <body class="dark">
     <div>
       <div id="waveform"></div>
-      <input type="button" id="btn-play" class="submit" value="Play">
+      <input type="button" id="btn-play" class="submit active" value="Play">
       <input type="button" id="btn-pause" class="submit" value="Pause">
-      <input type="button" id="btn-stop" class="submit" value="Stop">
-      <input type="button" id="btn-save" class="submit" value="Save">
+      <input type="button" id="btn-stop" class="submit active" value="Stop">
+      <input type="button" id="btn-save" class="submit active" value="Save">
     </div>
     <script src="../src/index.js"></script>
   </body>
