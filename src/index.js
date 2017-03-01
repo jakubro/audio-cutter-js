@@ -3,7 +3,10 @@ $(document).ready(function () {
 
   config = _songcut_config;
 
-  $form = createForm(config.target.uri, config.target.method, config.source.metadata);
+  $form = createForm(config.target.uri, config.target.method, $.extend({
+    startTime: null,
+    endTime: null
+  }, config.state));
   $('body').append($form);
 
   $play = $('#btn-play');
@@ -18,59 +21,57 @@ $(document).ready(function () {
   }, config.player));
 
   wavesurfer.on('ready', function () {
-    var duration, startTime, endTime, region;
-
-    duration = wavesurfer.getDuration();
-    startTime = config.source.metadata.startTime || 0;
-    endTime = Math.min(config.source.metadata.startTime || 30, duration);
+    var region;
 
     region = wavesurfer.addRegion($.extend({
-      start: startTime,
-      end: endTime,
+      start: config.state.startTime || 0,
+      end: Math.min(config.state.endTime || config.maxLength || 30, wavesurfer.getDuration()),
       loop: true,
       drag: true,
       resize: true,
     }, config.region));
+
     region.on('update-end', function () {
-      // update length of region to allowed max
       region.update({
-        end: Math.min(region.start + 30, region.end)
+        end: Math.min(region.start + config.maxLength || 30, region.end)
       });
-      // reset position to start of region
-      if(wavesurfer.isPlaying() && region.end < wavesurfer.getCurrentTime()) {
+      if (wavesurfer.isPlaying() && region.end < wavesurfer.getCurrentTime()) {
         wavesurfer.stop();
       }
-      wavesurfer.seekTo(region.start / duration);
+      wavesurfer.seekTo(region.start / wavesurfer.getDuration());
     });
 
     $play.on('click', function () {
       $play.removeClass('active');
       $pause.addClass('active');
+
       wavesurfer.play();
     });
 
     $pause.on('click', function () {
       $play.addClass('active');
       $pause.removeClass('active');
+
       wavesurfer.pause();
     });
 
     $stop.on('click', function () {
       $play.addClass('active');
       $pause.removeClass('active');
-      // reset position to start of region
+
       wavesurfer.stop();
-      wavesurfer.seekTo(region.start / duration);
+      wavesurfer.seekTo(region.start / wavesurfer.getDuration());
     });
 
     $save.on('click', function () {
       $form.find('input[name="startTime"]').val(region.start);
       $form.find('input[name="endTime"]').val(region.end);
+
       $form.submit();
     });
   });
 
-  wavesurfer.load(config.source.uri);
+  wavesurfer.load(config.file);
 });
 
 function createForm(action, method, inputs) {
@@ -82,7 +83,7 @@ function createForm(action, method, inputs) {
     if (inputs.hasOwnProperty(name)) {
       $input = $('<input type="hidden">');
       $input.attr('name', name);
-      $input.attr('value', inputs[name]);
+      $input.attr('value', inputs[name] || '');
       $form.append($input);
     }
   }
