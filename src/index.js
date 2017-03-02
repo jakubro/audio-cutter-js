@@ -49,19 +49,19 @@ $(document).ready(function () {
   $save = $('#btn-save');
 
   /**
-   * Adds 'active' class to $play button.
+   * Adds 'active' class to $pause button.
    */
   togglePlaying = function () {
-    $play.addClass('active');
-    $pause.removeClass('active');
+    $play.removeClass('active');
+    $pause.addClass('active');
   };
 
   /**
-   * Adds 'active' class to $pause button.
+   * Adds 'active' class to $play button.
    */
   togglePaused = function () {
-    $play.removeClass('active');
-    $pause.addClass('active');
+    $play.addClass('active');
+    $pause.removeClass('active');
   };
 
   /**
