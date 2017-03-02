@@ -1,8 +1,42 @@
 $(document).ready(function () {
-  var config, wavesurfer, $form, $play, $pause, $stop, $save;
+  'use strict';
 
-  config = _songcut_config;
+  var createForm, config, maxLength, $form, $play, $pause, $stop, $save, togglePlaying, togglePaused, wavesurfer;
 
+  /**
+   * Dynamically create HTML form (<form>),
+   * with 'action' and 'method' as attributes,
+   * and with <input> for each key in 'inputs'.
+   */
+  createForm = function(action, method, inputs) {
+    var $form, name, $input;
+    $form = $('<form></form>');
+    $form.attr('action', action);
+    $form.attr('method', method);
+    for (name in inputs) {
+      if (inputs.hasOwnProperty(name)) {
+        $input = $('<input type="hidden">');
+        $input.attr('name', name);
+        $input.attr('value', inputs[name] || '');
+        $form.append($input);
+      }
+    }
+    return $form;
+  };
+
+  /**
+   * Configuration.
+   */
+  config = _songcut_config || {};
+
+  /**
+   * Max length of region in seconds.
+   */
+  maxLength = config.maxLength || 30;
+
+  /**
+   * Form, where results will be submitted.
+   */
   $form = createForm(config.target.uri, config.target.method, $.extend({
     startTime: null,
     endTime: null
@@ -14,6 +48,28 @@ $(document).ready(function () {
   $stop = $('#btn-stop');
   $save = $('#btn-save');
 
+  /**
+   * Adds 'active' class to $play button.
+   */
+  togglePlaying = function () {
+    $play.addClass('active');
+    $pause.removeClass('active');
+  };
+
+  /**
+   * Adds 'active' class to $pause button.
+   */
+  togglePaused = function () {
+    $play.removeClass('active');
+    $pause.addClass('active');
+  };
+
+  /**
+   * ==========================================
+   * Setup WaveSurfer
+   * ==========================================
+   */
+
   wavesurfer = WaveSurfer.create($.extend({
     splitChannels: true,
     interact: false,
@@ -21,71 +77,88 @@ $(document).ready(function () {
   }, config.player));
 
   wavesurfer.on('ready', function () {
-    var region;
+    var duration, initialStart, initialEnd, adjustRegionLength, resetCurrentPosition, region;
+
+    /**
+     * Song duration in seconds.
+     */
+    duration = wavesurfer.getDuration();
+
+    /**
+     * Initial region start in seconds.
+     */
+    initialStart = config.state.startTime || 0;
+
+    /**
+     * Initial region end in seconds.
+     */
+    initialEnd = Math.min(config.state.endTime || maxLength, duration);
+
+    /**
+     * Adjusts the length of region
+     * to be less than max allowed length.
+     */
+    adjustRegionLength = function () {
+      var end, updatedEnd;
+      end = Math.min(region.start + maxLength, duration);
+      updatedEnd = Math.min(end, region.end);
+      if(end < region.end) {
+        region.update({ end: end });
+      }
+      return updatedEnd;
+    };
+
+    /**
+     * Resets current position of the player to
+     * start of region.
+     */
+    resetCurrentPosition = function (shouldStop) {
+      if (shouldStop && wavesurfer.isPlaying()) {
+        wavesurfer.stop();
+      }
+      wavesurfer.seekTo(region.start / duration);
+    };
+
+    /**
+     * ==========================================
+     * Setup WaveSurfer region
+     * ==========================================
+     */
 
     region = wavesurfer.addRegion($.extend({
-      start: config.state.startTime || 0,
-      end: Math.min(config.state.endTime || config.maxLength || 30, wavesurfer.getDuration()),
+      start: initialStart,
+      end: initialEnd,
       loop: true,
       drag: true,
-      resize: true,
+      resize: true
     }, config.region));
 
     region.on('update-end', function () {
-      region.update({
-        end: Math.min(region.start + config.maxLength || 30, region.end)
-      });
-      if (wavesurfer.isPlaying() && region.end < wavesurfer.getCurrentTime()) {
-        wavesurfer.stop();
-      }
-      wavesurfer.seekTo(region.start / wavesurfer.getDuration());
+      var end = adjustRegionLength();
+      resetCurrentPosition(end < wavesurfer.getCurrentTime());
     });
 
     $play.on('click', function () {
-      $play.removeClass('active');
-      $pause.addClass('active');
-
+      togglePlaying();
       wavesurfer.play();
     });
 
     $pause.on('click', function () {
-      $play.addClass('active');
-      $pause.removeClass('active');
-
+      togglePaused();
       wavesurfer.pause();
     });
 
     $stop.on('click', function () {
-      $play.addClass('active');
-      $pause.removeClass('active');
-
-      wavesurfer.stop();
-      wavesurfer.seekTo(region.start / wavesurfer.getDuration());
+      togglePaused();
+      resetCurrentPosition(true);
     });
 
     $save.on('click', function () {
       $form.find('input[name="startTime"]').val(region.start);
       $form.find('input[name="endTime"]').val(region.end);
-
       $form.submit();
     });
   });
 
   wavesurfer.load(config.file);
 });
-
-function createForm(action, method, inputs) {
-  var $form, name, $input;
-  $form = $('<form></form>');
-  $form.attr('action', action);
-  $form.attr('method', method);
-  for (name in inputs) {
-    if (inputs.hasOwnProperty(name)) {
-      $input = $('<input type="hidden">');
-      $input.attr('name', name);
-      $input.attr('value', inputs[name] || '');
-      $form.append($input);
-    }
-  }
-  return $form;
-}
