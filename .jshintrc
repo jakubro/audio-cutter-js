@@ -1,0 +1,12 @@
+{
+  "latedef": true,
+  "quotmark": "single",
+  "unused": "strict",
+
+  "browser": true,
+  "jquery": true,
+  "devel": false,
+  "globals": {
+    "_songcut_config": true
+  }
+}
