@@ -1,0 +1,3 @@
+bower_components/
+!bower_components/jquery/dist/
+!bower_components/wavesurfer.js/dist/
