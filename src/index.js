@@ -2,7 +2,8 @@ $(document).ready(function () {
   'use strict';
 
   var createForm, config, maxLength, $form, $play, $pause, $stop, $save,
-    togglePlaying, togglePaused, wavesurfer, initialPeaks;
+    $songLength, $regionLength, togglePlaying, togglePaused, wavesurfer,
+    initialPeaks;
 
   /**
    * Dynamically create HTML form (<form>),
@@ -98,6 +99,12 @@ $(document).ready(function () {
   $save = $('#btn-save');
 
   /**
+   * Info about song and selected region.
+   */
+  $songLength = $('#song-length');
+  $regionLength = $('#region-length');
+
+    /**
    * Adds 'active' class to $pause button.
    */
   togglePlaying = function () {
@@ -128,12 +135,14 @@ $(document).ready(function () {
   }, config.player));
 
   wavesurfer.on('ready', function () {
-    var duration, initialStart, initialEnd, adjustRegionLength, resetCurrentPosition, region;
+    var duration, initialStart, initialEnd, adjustRegionLength, resetCurrentPosition, updateInfo, region;
 
     /**
      * Song duration in seconds.
      */
     duration = wavesurfer.getDuration();
+
+    $songLength.text((Math.round(duration * 10) / 10) + ' sec');
 
     /**
      * Initial region start in seconds.
@@ -187,6 +196,7 @@ $(document).ready(function () {
     region.on('update-end', function () {
       var end = adjustRegionLength();
       resetCurrentPosition(end < wavesurfer.getCurrentTime());
+      $regionLength.text((Math.round((region.end - region.start) * 10) / 10) + ' sec');
     });
 
     $play.on('click', function () {

@@ -10,6 +10,20 @@
     .dark input.submit:not(.active) {
       color: grey;
     }
+    label {
+      display: block;
+      line-height: 1.8em;
+    }
+    label .name {
+      display: inline-block;
+      width: 170px;
+      text-align: right;
+      padding-right: .5em;
+    }
+    label .value {
+      width: 50%;
+      display: inline-block;
+    }
     .wavesurfer-handle {
       width: 20px !important;
       max-width: none !important;
@@ -74,6 +88,14 @@
 <body class="dark">
   <div>
     <div id="waveform"></div>
+    <label>
+      <span class="name">Song length</span>
+      <span id="song-length" class="value"></span>
+    </label>
+    <label>
+      <span class="name">Selected region length</span>
+      <span id="region-length" class="value"></span>
+    </label>
     <input type="button" id="btn-play" class="submit active" value="Play">
     <input type="button" id="btn-pause" class="submit" value="Pause">
     <input type="button" id="btn-stop" class="submit active" value="Stop">
