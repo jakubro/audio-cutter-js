@@ -3,7 +3,7 @@ $(document).ready(function () {
 
   var createForm, config, maxLength, $form, $play, $pause, $stop, $save,
     $songLength, $regionLength, togglePlaying, togglePaused, wavesurfer,
-    initialPeaks;
+    initialPeaks, getRegionLengthText, toMinutesAndSeconds, round, padLeft;
 
   /**
    * Dynamically create HTML form (<form>),
@@ -24,6 +24,37 @@ $(document).ready(function () {
       }
     }
     return $form;
+  };
+
+  round = function (val, precision) {
+    if(typeof precision === 'undefined') {
+      precision = 2;
+    }
+    return Math.round(val * Math.pow(10, precision)) / Math.pow(10, precision);
+  };
+
+  padLeft = function (value, pad) {
+    return String(pad + value).slice(-pad.length);
+  };
+
+  toMinutesAndSeconds = function (totalSeconds) {
+    var minutes, seconds;
+    minutes = Math.floor(totalSeconds / 60);
+    seconds = totalSeconds - minutes * 60;
+    return {
+      minutes: minutes,
+      seconds: seconds
+    };
+  };
+
+  getRegionLengthText = function (start, end) {
+    var duration, startParsed, endParsed;
+    duration = round(end - start);
+    startParsed = toMinutesAndSeconds(start);
+    endParsed = toMinutesAndSeconds(end);
+    return duration + ' sec (' +
+      padLeft(startParsed.minutes, '00') + ':' + padLeft(round(startParsed.seconds, 0), '00') + ' - ' +
+      padLeft(endParsed.minutes, '00') + ':' + padLeft(round(endParsed.seconds, 0), '00') + ')';
   };
 
   /**
@@ -142,7 +173,7 @@ $(document).ready(function () {
      */
     duration = wavesurfer.getDuration();
 
-    $songLength.text((Math.round(duration * 10) / 10) + ' sec');
+    $songLength.text(round(duration) + ' sec');
 
     /**
      * Initial region start in seconds.
@@ -154,7 +185,7 @@ $(document).ready(function () {
      */
     initialEnd = Math.min(config.state.endTime || maxLength, duration);
 
-    $regionLength.text((Math.round((initialEnd - initialStart) * 10) / 10) + ' sec');
+    $regionLength.text(getRegionLengthText(initialStart, initialEnd));
 
     /**
      * Adjusts the length of region
@@ -198,7 +229,7 @@ $(document).ready(function () {
     region.on('update-end', function () {
       var end = adjustRegionLength();
       resetCurrentPosition(end < wavesurfer.getCurrentTime());
-      $regionLength.text((Math.round((region.end - region.start) * 10) / 10) + ' sec');
+      $regionLength.text(getRegionLengthText(region.start, region.end));
     });
 
     $play.on('click', function () {
