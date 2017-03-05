@@ -135,7 +135,7 @@ $(document).ready(function () {
   }, config.player));
 
   wavesurfer.on('ready', function () {
-    var duration, initialStart, initialEnd, adjustRegionLength, resetCurrentPosition, updateInfo, region;
+    var duration, initialStart, initialEnd, adjustRegionLength, resetCurrentPosition, region;
 
     /**
      * Song duration in seconds.
@@ -153,6 +153,8 @@ $(document).ready(function () {
      * Initial region end in seconds.
      */
     initialEnd = Math.min(config.state.endTime || maxLength, duration);
+
+    $regionLength.text((Math.round((initialEnd - initialStart) * 10) / 10) + ' sec');
 
     /**
      * Adjusts the length of region
