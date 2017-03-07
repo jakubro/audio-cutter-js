@@ -252,6 +252,18 @@ $(document).ready(function () {
       $form.find('input[name="endTime"]').val(region.end);
       $form.submit();
     });
+
+    var prevWidth = 0;
+    window.addEventListener('resize',
+      WaveSurfer.util.debounce(function () {
+        if (prevWidth != wavesurfer.drawer.wrapper.clientWidth) {
+          prevWidth = wavesurfer.drawer.wrapper.clientWidth;
+          wavesurfer.empty();
+          wavesurfer.drawBuffer();
+          region.updateRender();
+        }
+      }, 100),
+    true);
   });
 
   wavesurfer.load(config.file, initialPeaks, 'auto');
