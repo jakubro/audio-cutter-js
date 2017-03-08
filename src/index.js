@@ -161,6 +161,8 @@ $(document).ready(function () {
     splitChannels: true,
     interact: false,
     scrollParent: false,
+    fillParent: true,
+    hideScrollbar: true,
     backend: 'MediaElement',
     forceDecode: true
   }, config.player));
