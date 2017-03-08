@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Example Audio Cutter App</title>
+  <!--<link rel="stylesheet" href="//www.online-ringtone-maker.com/ComingSoon/release/assets/css/style.css">-->
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .dark input.submit.disabled {
+      color: grey;
+    }
+    label {
+      display: block;
+      line-height: 1.8em;
+    }
+    label .name {
+      display: inline-block;
+      width: 170px;
+      text-align: right;
+      padding-right: .5em;
+    }
+    label .value {
+      width: 50%;
+      display: inline-block;
+    }
+    .wavesurfer-handle {
+      width: 10px !important;
+      max-width: none !important;
+      margin-left: -10px;
+    }
+  </style>
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="../bower_components/wavesurfer.js/dist/wavesurfer.min.js"></script>
+  <script src="../bower_components/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+  <script>
+    _songcut_config = {
+
+      /**
+       * Max length of song in seconds.
+       */
+      maxLength: 30,
+
+      /**
+       * URI of song.
+       */
+      file: 'https://wavesurfer-js.org/example/split-channels/stereo.mp3',
+
+      /**
+       * Form-data passed from initiator -> to this script -> to target endpoint.
+       */
+      state: {
+        id: '',
+        songtitle: 'Bohemian Rhapsody',
+        songartist: 'Queen',
+        songalbum: 'A Night at the Opera',
+        sourcePath: '/uploads/cache/28022017_210358_58b5e5be1e071.mp3'
+      },
+
+      /**
+       * Target endpoint.
+       */
+      target: {
+        uri: 'http://www.online-ringtone-maker.com/ComingSoon/release/cut.php',
+        method: 'post'
+      },
+
+      /**
+       * WaveSurfer player options.
+       */
+      player: {
+        container: '#waveform',
+        cursorColor: '#c63ab2',
+        progressColor: '#4BB9F7',
+        waveColor: '#7e7e7e',
+        barWidth: 3
+      },
+
+      /**
+       * WaveSurfer region options.
+       */
+      region: {
+        color: 'hsla(330, 100%, 20%, 0.2)'
+      }
+    };
+  </script>
+</head>
+<body class="dark">
+  <div style=" width: 80%; max-width: 960px; margin-left: auto; margin-right: auto;">
+    <div id="waveform"></div>
+    <label>
+      <span class="name">Song length</span>
+      <span id="song-length" class="value"></span>
+    </label>
+    <label>
+      <span class="name">Selected region length</span>
+      <span id="region-length" class="value"></span>
+    </label>
+    <input type="button" id="btn-play" class="submit" value="Play">
+    <input type="button" id="btn-pause" class="submit disabled" value="Pause">
+    <input type="button" id="btn-stop" class="submit" value="Stop">
+    <input type="button" id="btn-save" class="submit" value="Save">
+  </div>
+  <script src="../src/index.js"></script>
+</body>
+</html>
