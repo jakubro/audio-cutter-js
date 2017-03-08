@@ -139,16 +139,16 @@ $(document).ready(function () {
    * Adds 'active' class to $pause button.
    */
   togglePlaying = function () {
-    $play.removeClass('active');
-    $pause.addClass('active');
+    $play.addClass('disabled');
+    $pause.removeClass('disabled');
   };
 
   /**
    * Adds 'active' class to $play button.
    */
   togglePaused = function () {
-    $play.addClass('active');
-    $pause.removeClass('active');
+    $play.removeClass('disabled');
+    $pause.addClass('disabled');
   };
 
   /**

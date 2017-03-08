@@ -7,7 +7,7 @@
   <!--<link rel="stylesheet" href="//www.online-ringtone-maker.com/ComingSoon/release/assets/css/style.css">-->
   <link rel="stylesheet" href="./style.css">
   <style>
-    .dark input.submit:not(.active) {
+    .dark input.submit.disabled {
       color: grey;
     }
     label {
@@ -96,10 +96,10 @@
       <span class="name">Selected region length</span>
       <span id="region-length" class="value"></span>
     </label>
-    <input type="button" id="btn-play" class="submit active" value="Play">
-    <input type="button" id="btn-pause" class="submit" value="Pause">
-    <input type="button" id="btn-stop" class="submit active" value="Stop">
-    <input type="button" id="btn-save" class="submit active" value="Save">
+    <input type="button" id="btn-play" class="submit" value="Play">
+    <input type="button" id="btn-pause" class="submit disabled" value="Pause">
+    <input type="button" id="btn-stop" class="submit" value="Stop">
+    <input type="button" id="btn-save" class="submit" value="Save">
   </div>
   <script src="../src/index.js"></script>
 </body>
